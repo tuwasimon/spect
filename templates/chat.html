@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sarkin Mota</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    #chat-container {
+      width: 100%;
+      max-width: 430px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      height: 80vh;
+      min-height: 400px;
+      margin: 0 auto;
+    }
+
+    #chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background-color: #fdfcfb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      line-height: 1.4;
+      border-radius: 20px;
+      position: relative;
+      word-wrap: break-word;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #f1f0f0;
+      color: #000;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #0084ff;
+      color: white;
+    }
+
+    #input-area {
+      display: flex;
+      border-top: 1px solid #ccc;
+      background-color: #f0f0f0;
+      padding: 10px;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    button {
+      margin-left: 10px;
+      border: none;
+      background-color: #0084ff;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #006bbf;
+    }
+
+    #user-info-form {
+      text-align: center;
+      background: white;
+      padding: 30px 10px 10px 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto 20px auto;
+    }
+
+    #user-info-form input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 90%;
+      font-size: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    #user-info-form button {
+      margin-top: 10px;
+    }
+
+    .dashboard-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .dashboard-link a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    @media (max-width: 500px) {
+      #chat-container, #user-info-form {
+        max-width: 100vw;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 100vh;
+        height: 100vh;
+      }
+
+      #chat-box {
+        padding: 8px;
+      }
+
+      #user-info-form {
+        padding: 20px 2px 2px 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="user-info-form">
+  <h2>Welcome to Sarkin Mota virtual assistant</h2>
+  <p>Enter your details to continue</p>
+  <input type="text" id="user-name" placeholder="Your Name" required>
+  <input type="tel" id="user-phone" placeholder="Your Phone Number" required>
+  <button onclick="registerUser()">Start Chat</button>
+</div>
+
+<div id="chat-container" style="display: none;">
+  <div id="chat-box"></div>
+  <div id="input-area">
+    <input type="text" id="user-input" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+  <div class="dashboard-link">
+    <a href="/dashboard" target="_blank">Go to Dashboard</a>
+  </div>
+  <div id="quick-replies" style="padding:10px; border-top:1px solid #eee;">
+    <button onclick="sendQuickMessage('Toyota')">Toyota</button>
+    <button onclick="sendQuickMessage('Honda')">Honda</button>
+    <button onclick="sendQuickMessage('Lexus')">Lexus</button>
+    <button onclick="sendQuickMessage('Mercedes-Benz')">Mercedes-Benz</button>
+    <!-- Add more brands or specific cars as needed -->
+  </div>
+</div>
+
+<script>
+  async function registerUser() {
+    const name = document.getElementById('user-name').value;
+    const phone = document.getElementById('user-phone').value;
+
+    const response = await fetch('/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: phone,
+        name: name,
+        phone: phone
+      })
+    });
+
+    const data = await response.json();
+    if (data.error) {
+      alert(`Error: ${data.error}`);
+    } else {
+      document.getElementById('user-info-form').style.display = 'none';
+      document.getElementById('chat-container').style.display = 'flex';
+    }
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    const userId = document.getElementById('user-phone').value;
+    const chatBox = document.getElementById('chat-box');
+
+    // Show user's message
+    const userMessage = document.createElement('div');
+    userMessage.classList.add('message', 'user');
+    userMessage.textContent = message;
+    chatBox.appendChild(userMessage);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    input.value = '';
+
+    // Send to server
+    const response = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, message: message })
+    });
+
+    const data = await response.json();
+
+    // Show bot's reply
+    const botMessage = document.createElement('div');
+    botMessage.classList.add('message', 'bot');
+    botMessage.innerHTML = data.response; // <-- changed from textContent to innerHTML
+    chatBox.appendChild(botMessage);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function sendQuickMessage(text) {
+    const input = document.getElementById('user-input');
+    input.value = text;
+    sendMessage();
+  }
+</script>
+
+</body>
+</html>

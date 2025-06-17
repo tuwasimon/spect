@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        li:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registered Users</h1>
+    <ul id="user-list">
+        <!-- User list will be populated here -->
+    </ul>
+
+    <script>
+        async function loadUsers() {
+            const response = await fetch('/users');
+            const data = await response.json();
+
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = '';
+
+            data.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${user.name} (${user.phone})`;
+                listItem.onclick = () => window.location.href = `/user_chats/${user.id}`;
+                userList.appendChild(listItem);
+            });
+        }
+
+        // Load users on page load
+        window.onload = loadUsers;
+    </script>
+</body>
+</html>

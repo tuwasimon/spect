@@ -1,0 +1,63 @@
+Sarkin Mota is an automotive dealership that offers a wide selection of vehicles across different brands and price ranges. Below is a list of available cars and their prices (all prices are in Nigerian Naira - NGN):
+
+1. Toyota Corolla 2012  
+   - Price: ₦4,200,000  
+   - Condition: Foreign used  
+   - Transmission: Automatic  
+   - Fuel: Petrol
+
+2. Honda Accord 2014  
+   - Price: ₦4,800,000  
+   - Condition: Nigerian used  
+   - Transmission: Automatic  
+   - Fuel: Petrol
+
+3. Lexus RX 350 2016  
+   - Price: ₦12,500,000  
+   - Condition: Foreign used  
+   - Transmission: Automatic  
+   - Fuel: Petrol
+
+4. Toyota Highlander 2018  
+   - Price: ₦15,000,000  
+   - Condition: Foreign used  
+   - Transmission: Automatic  
+   - Fuel: Petrol
+
+5. Mercedes-Benz C300 2015  
+   - Price: ₦10,800,000  
+   - Condition: Foreign used  
+   - Transmission: Automatic  
+   - Fuel: Petrol
+
+6. Toyota Camry 2010  
+   - Price: ₦3,600,000  
+   - Condition: Nigerian used  
+   - Transmission: Automatic  
+   - Fuel: Petrol
+
+7. Hyundai Elantra 2013  
+   - Price: ₦3,200,000  
+   - Condition: Foreign used  
+   - Transmission: Automatic  
+   - Fuel: Petrol
+
+8. Kia Rio 2015  
+   - Price: ₦3,500,000  
+   - Condition: Foreign used  
+   - Transmission: Manual  
+   - Fuel: Petrol
+
+9. Ford Edge 2012  
+   - Price: ₦5,000,000  
+   - Condition: Nigerian used  
+   - Transmission: Automatic  
+   - Fuel: Petrol
+
+10. BMW X5 2014  
+    - Price: ₦13,000,000  
+    - Condition: Foreign used  
+    - Transmission: Automatic  
+    - Fuel: Petrol
+
+To inquire about a specific car, availability, or to schedule a test drive, please contact Sarkin Mota customer support.

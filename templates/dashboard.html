@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-list li {
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .user-list li:hover {
+            background-color: #e9e9e9;
+        }
+
+        .chat-details {
+            margin-top: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                max-width: 100vw;
+                padding: 0 5px;
+            }
+            table, th, td {
+                font-size: 13px;
+            }
+            .section {
+                margin-bottom: 20px;
+            }
+            h1 {
+                font-size: 1.3em;
+            }
+        }
+
+        .reset-btn {
+            background: #007bff;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .reset-btn:hover {
+            background: #0056b3;
+        }
+
+        .chat-entry {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-entry span {
+            flex-grow: 1;
+        }
+
+        .chat-entry button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-entry button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatbot Dashboard</h1>
+    <div class="container">
+        <div style="text-align:right; margin-bottom:20px;">
+            <a href="/reset_password" class="reset-btn">Reset Admin Password</a>
+        </div>
+        <div class="section">
+            <h2>Users</h2>
+            <ul class="user-list" id="user-list">
+                <!-- User list will be populated here -->
+            </ul>
+        </div>
+
+        <div id="chat-details" class="section chat-details" style="display: none;">
+            <h2>Chat Details</h2>
+            <button id="delete-all-chats-btn" style="background:#dc3545;color:#fff;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;margin-bottom:10px;display:none;">
+                Delete All Chats for This User
+            </button>
+            <div id="chat-entries">
+                <!-- Chat details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadUsers() {
+            const response = await fetch('/users');
+            const data = await response.json();
+
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = '';
+
+            data.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    ${user.name} (${user.phone})
+                    <button style="margin-left:10px;background:#dc3545;color:#fff;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;"
+                        onclick="deleteUser(${user.id}, event)">Delete User</button>
+                `;
+                listItem.onclick = (e) => {
+                    // Prevent loading chats if delete button is clicked
+                    if (e.target.tagName !== 'BUTTON') loadUserChats(user.id);
+                };
+                userList.appendChild(listItem);
+            });
+        }
+
+        async function loadUserChats(userId) {
+            const response = await fetch(`/user_chats/${userId}`);
+            const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            const chatEntries = document.getElementById('chat-entries');
+            chatEntries.innerHTML = '';
+
+            for (const chat of data.chats) {
+                const chatEntry = document.createElement('div');
+                chatEntry.className = 'chat-entry';
+                chatEntry.id = `chat-${chat.id}`;
+                chatEntry.innerHTML = `<span>${chat.user_message} - ${chat.bot_response}</span><button onclick="deleteChat(${chat.id})">Delete</button>`;
+                chatEntries.appendChild(chatEntry);
+            }
+
+            document.getElementById('chat-details').style.display = 'block';
+        }
+
+        function deleteChat(chatId) {
+          if (!confirm("Are you sure you want to delete this chat?")) return;
+          fetch(`/delete_chat/${chatId}`, { method: "POST" })
+            .then(res => res.json())
+            .then(data => {
+              if (data.message) {
+                document.getElementById(`chat-${chatId}`).remove();
+              } else {
+                alert(data.error || "Failed to delete chat.");
+              }
+            });
+        }
+
+        function deleteUser(userId, event) {
+            event.stopPropagation();
+            if (!confirm("Are you sure you want to delete this user and all their chats?")) return;
+            fetch(`/delete_user/${userId}`, { method: "POST" })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message) {
+                        // Remove user from the list and hide chat details if open
+                        event.target.closest('li').remove();
+                        document.getElementById('chat-details').style.display = 'none';
+                    } else {
+                        alert(data.error || "Failed to delete user.");
+                    }
+                });
+        }
+
+        // Load users on page load
+        window.onload = loadUsers;
+    </script>
+</body>
+</html>
